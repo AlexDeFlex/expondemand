@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run ExpOnDemand (debug)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/server.js",
+      "runtimeArgs": ["--disable-warning=ExperimentalWarning"],
+      "env": { "DB_PATH": "${workspaceFolder}/expondemand.db" },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Seed demo data",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/seed.js",
+      "runtimeArgs": ["--disable-warning=ExperimentalWarning"],
+      "env": { "DB_PATH": "${workspaceFolder}/expondemand.db", "DEMO_MODE": "true" },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run all tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": ["--disable-warning=ExperimentalWarning", "--test", "test/**/*.test.js"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

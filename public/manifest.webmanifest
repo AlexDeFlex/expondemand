@@ -1,0 +1,16 @@
+{
+  "name": "ExpOnDemand: Expert On Demand",
+  "short_name": "ExpOnDemand",
+  "description": "Verified entrepreneurs meet verified professionals for consultations and licensing partnerships.",
+  "start_url": "/#/menu",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0a7c7a",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "appId": "za.co.expondemand.app",
+  "appName": "ExpOnDemand",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false }
+}

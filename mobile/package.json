@@ -1,0 +1,20 @@
+{
+  "name": "expondemand-mobile",
+  "private": true,
+  "description": "Packages the ExpOnDemand web app as an Android / iPhone app with Capacitor",
+  "type": "module",
+  "scripts": {
+    "prepare:web": "node prepare.mjs",
+    "add:android": "cap add android",
+    "add:ios": "cap add ios",
+    "sync": "node prepare.mjs && cap sync",
+    "open:android": "cap open android",
+    "open:ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/core": "latest",
+    "@capacitor/ios": "latest"
+  },
+  "devDependencies": { "@capacitor/cli": "latest" }
+}

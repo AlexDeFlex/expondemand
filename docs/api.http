@@ -1,0 +1,183 @@
+# Try the API from VS Code. Install the "REST Client" extension, then click "Send Request" above any request.
+# Start the server first:  npm run dev    (dev code is 123456)
+
+@base = http://localhost:3000
+
+### Is the server up?
+GET {{base}}/health
+
+### Search the 930 professions
+GET {{base}}/professions?q=lawyer&limit=5
+
+# ---------- Entrepreneur ----------
+
+### 1. Ask for a code (any new number)
+POST {{base}}/auth/request-otp
+Content-Type: application/json
+
+{ "phone": "0821230001" }
+
+### 2. Create the entrepreneur account
+# @name entSignup
+POST {{base}}/auth/verify-otp
+Content-Type: application/json
+
+{ "phone": "0821230001", "code": "123456", "role": "entrepreneur", "mode": "signup" }
+
+###
+@ent = {{entSignup.response.body.token}}
+
+### 3. Register the business (the ID must be a valid South African ID number)
+POST {{base}}/business
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "company_name": "Mokoena Build (Pty) Ltd", "cipc_number": "2019/123456/07", "director_id": "8001015009087" }
+
+### 4. Staff sign in (default dev staff number) and approve it
+POST {{base}}/auth/request-otp
+Content-Type: application/json
+
+{ "phone": "0821110000" }
+
+###
+# @name adminLogin
+POST {{base}}/auth/verify-otp
+Content-Type: application/json
+
+{ "phone": "0821110000", "code": "123456", "mode": "signin" }
+
+###
+@admin = {{adminLogin.response.body.token}}
+
+### The review queue
+GET {{base}}/admin/queue
+Authorization: Bearer {{admin}}
+
+### Approve (paste the business id from the queue)
+POST {{base}}/admin/businesses/PASTE-ID-HERE/review
+Authorization: Bearer {{admin}}
+Content-Type: application/json
+
+{ "approve": true }
+
+### 5. Sign the Service Delivery Standards
+POST {{base}}/business/sds
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "accept": true, "answers": { "services": "Construction and renovations", "payment_terms": "Within 2 days", "dispute_process": "Written complaint", "no_licence_misuse": true } }
+
+### 6. Let the AI intake structure a rambling request
+POST {{base}}/intake
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "text": "I need a lawyer to review my supplier contract before Friday" }
+
+### 7. Post a consultation request
+POST {{base}}/threads
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "need_type": "consultation", "profession": "Commercial Lawyer", "description": "Supplier agreement needs review before signing", "budget_min": 1000, "budget_max": 1500, "urgency": "today", "positions": 1 }
+
+### 8. See your requests and the offers on them
+GET {{base}}/threads/mine
+Authorization: Bearer {{ent}}
+
+### Pick an offer (paste thread id and offer id)
+POST {{base}}/threads/PASTE-THREAD-ID/pick
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "offer_id": "PASTE-OFFER-ID" }
+
+### Pay into the secure hold (paste the deal id)
+POST {{base}}/deals/PASTE-DEAL-ID/pay
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "method": "card", "token": "tok_visa" }
+
+### Confirm done and release the money
+POST {{base}}/deals/PASTE-DEAL-ID/confirm
+Authorization: Bearer {{ent}}
+
+### Download everything we hold about you (POPIA)
+GET {{base}}/me/export
+Authorization: Bearer {{ent}}
+
+# ---------- Professional ----------
+
+### Create the professional account
+POST {{base}}/auth/request-otp
+Content-Type: application/json
+
+{ "phone": "0831230001" }
+
+###
+# @name proSignup
+POST {{base}}/auth/verify-otp
+Content-Type: application/json
+
+{ "phone": "0831230001", "code": "123456", "role": "professional", "mode": "signup" }
+
+###
+@pro = {{proSignup.response.body.token}}
+
+### Submit the profile (proof_sha256 is the SHA-256 fingerprint of the document)
+POST {{base}}/professional
+Authorization: Bearer {{pro}}
+Content-Type: application/json
+
+{ "full_name": "Thandi Naidoo", "tier": 1, "profession": "Commercial Lawyer", "reg_number": "LPC-48210", "id_number": "9001015009084", "proof_sha256": "0000000000000000000000000000000000000000000000000000000000000000" }
+
+### Staff approve (paste the user id from the queue), then:
+GET {{base}}/feed
+Authorization: Bearer {{pro}}
+
+### Send an offer or counter-offer (paste thread id)
+POST {{base}}/threads/PASTE-THREAD-ID/offers
+Authorization: Bearer {{pro}}
+Content-Type: application/json
+
+{ "kind": "counter", "amount": 1400, "note": "12 years in this field" }
+
+### Mark the work delivered (paste deal id)
+POST {{base}}/deals/PASTE-DEAL-ID/deliver
+Authorization: Bearer {{pro}}
+
+# ---------- One phone number, several businesses and both hats (same ID number) ----------
+
+### A second business on the same phone number (the ID must be the same person's)
+POST {{base}}/business
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "company_name": "Second Co (Pty) Ltd", "cipc_number": "2019/654321/07", "director_id": "8001015009087" }
+
+### With a business_id when you have more than one
+POST {{base}}/business/sds
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "business_id": "PASTE-BUSINESS-ID", "accept": true, "answers": { "services": "Catering and events", "payment_terms": "Within 2 days", "dispute_process": "Written complaint", "no_licence_misuse": true } }
+
+### See your businesses, roles and which hat is on
+GET {{base}}/me
+Authorization: Bearer {{ent}}
+
+### Add the professional side to this phone number (needs a recent code; same ID number)
+POST {{base}}/me/roles
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "role": "professional", "id_number": "8001015009087" }
+
+### Switch hats without a new code
+POST {{base}}/auth/switch-role
+Authorization: Bearer {{ent}}
+Content-Type: application/json
+
+{ "role": "entrepreneur" }

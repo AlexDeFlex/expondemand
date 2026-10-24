@@ -1,0 +1,27 @@
+{
+  "name": "expondemand",
+  "version": "0.1.0",
+  "description": "ExpOnDemand: expert on demand. Verified entrepreneurs meet verified professionals for consultations and licensing partnerships.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --watch --disable-warning=ExperimentalWarning src/server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\"",
+    "seed": "node --disable-warning=ExperimentalWarning src/seed.js",
+    "mobile:prepare": "node mobile/prepare.mjs",
+    "check:sms": "node --disable-warning=ExperimentalWarning src/tools/check.js sms",
+    "check:registry": "node --disable-warning=ExperimentalWarning src/tools/check.js registry",
+    "backup": "node --disable-warning=ExperimentalWarning src/tools/backup.js",
+    "doctor": "node --disable-warning=ExperimentalWarning src/tools/doctor.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "jsdom": "^30.1.3"
+  }
+}

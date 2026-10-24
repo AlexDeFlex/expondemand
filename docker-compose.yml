@@ -1,0 +1,16 @@
+# One command to run the whole thing with automatic HTTPS:  docker compose up -d
+# 1) Put your domain in Caddyfile.  2) Copy .env.example to .env and fill it in.
+services:
+  app:
+    build: .
+    env_file: .env
+    environment: { NODE_ENV: production, DB_PATH: /data/expondemand.db }
+    volumes: [ "appdata:/data" ]
+    restart: unless-stopped
+  caddy:
+    image: caddy:2
+    ports: [ "80:80", "443:443" ]
+    volumes: [ "./Caddyfile:/etc/caddy/Caddyfile:ro", "caddydata:/data" ]
+    depends_on: [ app ]
+    restart: unless-stopped
+volumes: { appdata: {}, caddydata: {} }

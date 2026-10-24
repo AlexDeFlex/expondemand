@@ -1,0 +1,7 @@
+node_modules
+*.db
+*.db-*
+.env
+mobile/www
+test
+docs
